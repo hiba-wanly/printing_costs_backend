@@ -11,8 +11,8 @@ from printers.models import Printers
 
 
 @api_view(['GET'])
-def getAll(request, id):
-    printer = list(UserPrinters.objects.filter(user_id = id).values())
+def getAll(request, ui):
+    printer = list(UserPrinters.objects.filter(user_id = ui).values())
     return Response({
        'status' : 200,
        'message' : 'Data retrieved  successfully',
@@ -24,22 +24,22 @@ def getAll(request, id):
 @api_view(["POST"])
 def create(request, pk, ui):
     try:
-         material = Printers.objects.get(id = pk)
-         name = material.name
-         preparation_cost = material.preparation_cost
-         start_up_cost = material.start_up_cost
-         printer_wear_and_tear = material.printer_wear_and_tear
-         depreciation_in_hours = material.depreciation_in_hours
-         inverter_and_battery_wear = material.inverter_and_battery_wear
-         kilowatts_old = material.kilowatts_old
-         electricity_courier = material.electricity_courier
-         single_material = material.single_material
-         termination_costs = material.termination_costs
-         supervision_costs = material.supervision_costs
-         courier_depreciation = material.courier_depreciation
-         price_per_kilowatt_with_depreciation = material.price_per_kilowatt_with_depreciation
-         electricity_costs = material.electricity_costs
-         courier_printing = material.courier_printing
+         printer = Printers.objects.get(id = pk)
+         name = printer.name
+         preparation_cost = printer.preparation_cost
+         start_up_cost = printer.start_up_cost
+         printer_wear_and_tear = printer.printer_wear_and_tear
+         depreciation_in_hours = printer.depreciation_in_hours
+         inverter_and_battery_wear = printer.inverter_and_battery_wear
+         kilowatts_old = printer.kilowatts_old
+         electricity_courier = printer.electricity_courier
+         single_material = printer.single_material
+         termination_costs = printer.termination_costs
+         supervision_costs = printer.supervision_costs
+         courier_depreciation = printer.courier_depreciation
+         price_per_kilowatt_with_depreciation = printer.price_per_kilowatt_with_depreciation
+         electricity_costs = printer.electricity_costs
+         courier_printing = printer.courier_printing
 
          printer = UserPrinters.objects.create(
                 name = name,preparation_cost = preparation_cost, start_up_cost =start_up_cost,
@@ -51,7 +51,7 @@ def create(request, pk, ui):
                 electricity_costs=electricity_costs,courier_printing=courier_printing, user_id=ui
             )
          data = model_to_dict(printer)
-         printer = list(UserPrinters.objects.values())
+         printer = list(UserPrinters.objects.filter(user_id = ui).values())
          return Response({'status' : 200,'message' : 'printer was added successfully','data' : printer},status=200)
     except Printers.DoesNotExist:
          return Response({'status' : 404,'message' : 'cant not find data','data' : {}},status=404)
@@ -59,7 +59,7 @@ def create(request, pk, ui):
 
 @csrf_exempt
 @api_view(["POST"])
-def update(request, id):
+def update(request, id,ui):
     try:
         data = UserPrinters.objects.filter(id = id).first()
         name = request.data.get('name')
@@ -111,7 +111,7 @@ def update(request, id):
              data.supervision_costs=supervision_costs                                           
         data.save()
         printer = model_to_dict(data)
-        printer2 = list(UserPrinters.objects.values())
+        printer2 = list(UserPrinters.objects.filter(user_id = ui).values())
         return Response({'status' : 200,'message' : 'printer was updated successfully','data' : printer2},status=200)
     except UserPrinters.DoesNotExist:
         return Response({'status' : 404,'message' : 'cant not find data','data' : {}},status=404)
@@ -120,12 +120,12 @@ def update(request, id):
 
 @csrf_exempt
 @api_view(["DELETE"])
-def delete(request, id):
+def delete(request, id,ui):
         data = UserPrinters.objects.filter(id = id).first()
         if not data:
              return Response({'status' : 404,'message' : 'cant not find data','data' : {}},status=404)
         data.delete()
-        printer = list(UserPrinters.objects.values())
+        printer = list(UserPrinters.objects.filter(user_id = ui).values())
         return Response({'status' : 200,'message' : 'printer was deleted successfully','data' : printer},status=200)
         
    

@@ -82,13 +82,16 @@ def addORupdate(request ,pk):
 
 @api_view(['GET'])
 def getUserFinance(request, pk):
-    finance = Finance.objects.get(user_id = pk)
-    finance2 = model_to_dict(finance)
-    return Response({
-       'status' : 200,
-       'message' : 'Data retrieved  successfully',
-       'data' : finance2
-    },status=200)
+    try:
+        finance = Finance.objects.get(user_id = pk)
+        finance2 = model_to_dict(finance)
+        return Response({
+           'status' : 200,
+           'message' : 'Data retrieved  successfully',
+           'data' : finance2
+        },status=200)
+    except Finance.DoesNotExist:
+         return Response({'status' : 404,'message' : 'cant not find data','data' : {}},status=404)
 
 
    

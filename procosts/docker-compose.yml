@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: ./backend_procosts/backend
+      dockerfile: docker/docker_files/Dockerfile
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend_procosts/backend:/code_api
+      - media-volume:/code_api/media
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend_procosts/.env
+
+  procosts-mysql-db:
+    container_name: procosts-mysql-db
+    image: mariadb:10.4.24
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: printing_costs
+    volumes:
+      - mysql-storage:/var/lib/mysql
+    ports:
+      - "3306:3306"
+ 
+  procosts-phpmyadmin:
+    container_name: procosts-phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST: procosts-mysql-db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8000:8000"
+

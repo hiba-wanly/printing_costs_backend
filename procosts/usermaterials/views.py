@@ -12,8 +12,8 @@ from material.models import Materials
 
 
 @api_view(['GET'])
-def getAll(request,id):
-    material = list(UserMaterials.objects.filter(user_id = id).values())
+def getAll(request,ui):
+    material = list(UserMaterials.objects.filter(user_id = ui).values())
     return Response({
        'status' : 200,
        'message' : 'Data retrieved  successfully',
@@ -31,11 +31,11 @@ def create(request, pk, ui):
          price = material.price
          number_of_units = material.number_of_units
          cost_per_One = material.cost_per_One
-         color = request.data.get('color')
-         brand = request.data.get('brand')
+         color = material.color
+         brand = material.brand
          material = UserMaterials.objects.create(name = name,unit = unit,price = price,number_of_units = number_of_units,cost_per_One = cost_per_One, user_id = ui, color = color, brand = brand)
          data = model_to_dict(material)
-         material2 = list(UserMaterials.objects.values())
+         material2 = list(UserMaterials.objects.filter(user_id = ui).values())
          return Response({'status' : 200,'message' : 'material was added successfully','data' : material2})
     except Materials.DoesNotExist:
         return Response({'status' : 404,'message' : 'cant not find data id','data' : {}},status=404)
@@ -44,7 +44,7 @@ def create(request, pk, ui):
 
 @csrf_exempt
 @api_view(["POST"])
-def update(request, id):
+def update(request, id,ui):
     try:
         data = UserMaterials.objects.get(id = id)
         name = request.data.get('name')
@@ -71,7 +71,7 @@ def update(request, id):
             data.brand = brand         
         data.save()    
         material = model_to_dict(data)
-        material2 = list(UserMaterials.objects.values())
+        material2 = list(UserMaterials.objects.filter(user_id = ui).values())
         return JsonResponse({'status' : 200,'message' : 'material was updated successfully','data' : material2})
     except UserMaterials.DoesNotExist:
         return JsonResponse({'status' : 404,'message' : 'cant not find data','data' : {}})
@@ -80,12 +80,12 @@ def update(request, id):
 
 @csrf_exempt
 @api_view(["DELETE"])
-def delete(request, id):
+def delete(request, id,ui):
         data = UserMaterials.objects.filter(id = id).first()
         if not data:
             return Response({'status' : 404,'message' : 'cant not find data','data' : {}},status=404)
         data.delete()
-        material = list(UserMaterials.objects.values())
+        material = list(UserMaterials.objects.filter(user_id = ui).values())
         return JsonResponse({'status' : 200,'message' : 'material was deleted successfully','data' : material})
    
 

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+# from decouple import config # type: ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +29,8 @@ SECRET_KEY = 'django-insecure-z&+(n-3i165rk8ldh%x=uf#9#t1eadu-ttii#!0s49(x8=6rf=
 DEBUG = True
 
 #'127.0.0.1'
-ALLOWED_HOSTS = ['0.0.0.0','localhost','192.168.1.107','192.168.1.108','192.168.1.110']
+ALLOWED_HOSTS = ['*']
+#'0.0.0.0','localhost','192.168.1.107','192.168.1.108','192.168.1.110'
 
 
 # Application definition
