@@ -6,13 +6,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 RUN set -e; \
     apt-get update ;\
     apt-get -y install netcat-traditional ;\
-    apt-get install -y sqlite3 libsqlite3-dev;\
+    # apt-get install -y sqlite3 libsqlite3-dev;\
     apt-get -y install gettext ;
 
-COPY ./requirements.txt /code_api/requirements.txt
+# COPY ./requirements.txt /code_api/requirements.txt
 RUN set -e; \
     /usr/local/bin/python -m pip install --upgrade pip ;\
-    python -m pip install -r /code_api/requirements.txt ;
+    pip install pipreqs;\
+    pipreqs .;\
+    python -m pip install -r requirements.txt ;
 
 # RUN mkdir /code_api
 COPY . /code_api/
