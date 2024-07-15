@@ -1,31 +1,50 @@
 version: '3.9'
 
 services:
-  api:
-    build:
-      dockerfile: /Dockerfile
-    restart: unless-stopped
-    command: python manage.py runserver 0.0.0.0:8050
-    volumes:
-      - backend:/code_api
-      - media-volume:/code_api/media
-    ports:
-      - 8050:8050
-    env_file:
-      - .env
-
+  
   procosts-mysql-db:
     container_name: procosts-mysql-db
     image: mysql:8
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 
-      MYSQL_DATABASE: printing_costs
+      MYSQL_DATABASE: 'printing_costs' 
+      MYSQL_USER: 'admin' 
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password' 
+    
     volumes:
       - mysql-storage:/var/lib/mysql
+      - /tmp/app/mysqld:/var/run/mysqld
     ports:
-      - "3309:3306"
- 
+      - "3308:3306"
+    networks:
+      - mynetwork
+  
+  api:
+    container_name: api
+    depends_on:
+      - procosts-mysql-db
+    build:
+      dockerfile: /Dockerfile
+    restart: unless-stopped
+    command: python manage.py runserver localhost:8050
+    volumes:
+      - backend:/code_api
+      - media-volume:/code_api/media
+      - /tmp/app/mysqld:/run/mysqld
+    ports:
+      - 8050:8050
+    environment:
+      - DJANGO_SETTINGS_MODULE=procosts.settings
+      - DATABASE_NAME=printing_costs
+      - DATABASE_USER=admin
+      - DATABASE_PASSWORD=password
+      - DATABASE_HOST=procosts-mysql-db
+      - DATABASE_PORT=3308
+    networks:
+      - mynetwork
+
+  
   procosts-phpmyadmin:
     container_name: procosts-phpmyadmin
     image: phpmyadmin/phpmyadmin:5.2.1
@@ -33,11 +52,16 @@ services:
     environment:
       PMA_HOST: procosts-mysql-db
       PMA_USER: root
-      PMA_PASSWORD: root
+      PMA_PASSWORD: password
     ports:
       - "8000:80"
+    networks:
+      - mynetwork
       
 volumes:
   backend:
   media-volume:
   mysql-storage:
+
+networks:
+  mynetwork:
