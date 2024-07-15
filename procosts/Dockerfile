@@ -12,8 +12,8 @@ RUN set -e; \
 # COPY ./requirements.txt /code_api/requirements.txt
 RUN set -e; \
     /usr/local/bin/python -m pip install --upgrade pip ;\
-    pip install pipreqs;\
-    pipreqs .;\
+    # pip install pipreqs;
+    # pipreqs ./;
     python -m pip install -r requirements.txt ;
 
 # RUN mkdir /code_api
