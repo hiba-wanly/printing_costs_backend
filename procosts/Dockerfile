@@ -1,23 +1,27 @@
-FROM python:3.9
+FROM python:3.11.4-slim-buster
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-COPY . /code_api
+
+# Install necessary build dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    default-libmysqlclient-dev \
+    gcc
+
+# Set working directory
 WORKDIR /code_api
-# COPY ./requirements.txt /code_api/requirements.txt
+
+# Copy application code
+COPY . /code_api
+
+# Upgrade pip and install Python dependencies
 RUN pip install --upgrade pip 
 RUN pip install -r requirements.txt
-# RUN set -e;\
-# apt-get update -y;\
-# apt-get install -y python3-dev;\
-# apt-get install -y default-libmysqlclient-dev;\
-# apt-get -y install netcat-traditional ;\
-# apt-get install mysql-server mysql;\
-# apt-get install -y sqlite3 libsqlite3-dev;\
-# apt-get -y install gettext ;
 
-# RUN mkdir /code_api
+# Make entrypoint script executable
 RUN chmod +x /code_api/docker/entrypoints/entrypoint.sh
 
 EXPOSE 8050
+
 # ENTRYPOINT [ "/code_api/docker/entrypoints/entrypoint.sh" ]

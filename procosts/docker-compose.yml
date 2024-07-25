@@ -1,67 +1,50 @@
 version: '3.9'
 
 services:
-  
-  procosts-mysql-db:
-    container_name: procosts-mysql-db
-    image: mysql:8
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'printing_costs' 
-      MYSQL_USER: 'admin' 
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password' 
-    
-    volumes:
-      - mysql-storage:/var/lib/mysql
-      - /tmp/app/mysqld:/var/run/mysqld
-    ports:
-      - "3308:3306"
-    networks:
-      - mynetwork
-  
   api:
-    container_name: api
-    depends_on:
-      - procosts-mysql-db
     build:
-      dockerfile: /Dockerfile
-    restart: unless-stopped
-    command: python manage.py runserver localhost:8050
+      dockerfile: ./Dockerfile
     volumes:
-      - backend:/code_api
+      - .:/code_api
       - media-volume:/code_api/media
       - /tmp/app/mysqld:/run/mysqld
     ports:
       - 8050:8050
-    environment:
-      - DJANGO_SETTINGS_MODULE=procosts.settings
-      - DATABASE_NAME=printing_costs
-      - DATABASE_USER=admin
-      - DATABASE_PASSWORD=password
-      - DATABASE_HOST=procosts-mysql-db
-      - DATABASE_PORT=3308
-    networks:
-      - mynetwork
+    restart: unless-stopped
+    container_name: api
+    command: python manage.py runserver 0.0.0.0:8050
+    env_file:
+      - ./.env.development
+    depends_on:
+      - database
 
-  
-  procosts-phpmyadmin:
-    container_name: procosts-phpmyadmin
-    image: phpmyadmin/phpmyadmin:5.2.1
+  database:
+    container_name: database
+    image: mysql:8.0.33
+    restart: always
+    privileged: true
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    command: --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    privileged: true
+    ports:
+      - '8000:80'
     restart: always
     environment:
-      PMA_HOST: procosts-mysql-db
-      PMA_USER: root
-      PMA_PASSWORD: password
-    ports:
-      - "8000:80"
-    networks:
-      - mynetwork
-      
+      PMA_HOST: database
+      UPLOAD_LIMIT: 50M
+    depends_on:
+      - database
+
 volumes:
   backend:
   media-volume:
   mysql-storage:
 
-networks:
-  mynetwork:
