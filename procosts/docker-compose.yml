@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: ./Dockerfile
     volumes:
-      - ./code_api
+      
       - media-volume:/code_api/media
       - /tmp/app/mysqld:/run/mysqld
     ports:
