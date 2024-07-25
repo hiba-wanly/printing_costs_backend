@@ -6,6 +6,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
+from finance.models import Finance
+from other.models import Other
 
 
 # Create your views here.
@@ -18,8 +20,13 @@ class RegisterUserView(GenericAPIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             user=serializer.data
-            # print(user)
+            
+            
             user1 = User.objects.get(email = user['email'])
+            print("KOKOK")
+            print(user1.id)
+            finance = Finance.objects.create( coins = 0, user_id = user1.id)
+            other = Other.objects.create(gain = 0, risk = 0, user_id = user1.id)
             print(user1)
             refresh = RefreshToken.for_user(user1)
             print(refresh)
@@ -66,13 +73,13 @@ class ChangePhotoView(GenericAPIView):
                 },
                    status=status.HTTP_200_OK)
             return Response({
-                   'data' :'add image ',
+                   'data' :' image not found ',
                 },
                    status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
              return Response({
-                   'data' :'not found',
+                   'data' :'user not found',
                 },
                    status=status.HTTP_404_NOT_FOUND)
         
