@@ -10,4 +10,5 @@ class UserMaterials(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     color = models.CharField(max_length = 250,null= True , blank=True)
     brand = models.CharField(max_length = 250,null= True , blank=True)
+    owner = models.CharField(max_length = 250,null= True , blank=True,default="")
 

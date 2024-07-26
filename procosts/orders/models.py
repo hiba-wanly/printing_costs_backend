@@ -18,3 +18,5 @@ class Orders(models.Model):
     membership = models.CharField(max_length = 250)
     gain = models.IntegerField()
     risk = models.IntegerField()
+    material_costs = models.FloatField(null= True , blank=True)
+    owner = models.CharField(max_length = 250,null= True , blank=True)

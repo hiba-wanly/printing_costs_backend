@@ -33,7 +33,8 @@ def create(request, pk, ui):
          cost_per_One = material.cost_per_One
          color = material.color
          brand = material.brand
-         material = UserMaterials.objects.create(name = name,unit = unit,price = price,number_of_units = number_of_units,cost_per_One = cost_per_One, user_id = ui, color = color, brand = brand)
+         owner = request.data.get('owner')
+         material = UserMaterials.objects.create(name = name,unit = unit,price = price,number_of_units = number_of_units,cost_per_One = cost_per_One, user_id = ui, color = color, brand = brand,owner=owner)
          data = model_to_dict(material)
          material2 = list(UserMaterials.objects.filter(user_id = ui).values())
          return Response({'status' : 200,'message' : 'material was added successfully','data' : material2})
@@ -53,6 +54,7 @@ def update(request, id,ui):
         number_of_units = request.data.get('number_of_units')
         color = request.data.get('color')
         brand = request.data.get('brand')
+        owner = request.data.get('owner')
         if not data:
             return Response({'status' : 404,'message' : 'cant not find data id','data' : {}},status=404)
         if name:
@@ -68,7 +70,9 @@ def update(request, id,ui):
         if color:
             data.color = color
         if brand:
-            data.brand = brand         
+            data.brand = brand 
+        if owner:
+            data.owner = owner            
         data.save()    
         material = model_to_dict(data)
         material2 = list(UserMaterials.objects.filter(user_id = ui).values())

@@ -28,6 +28,8 @@ def create(request):
     membership = request.data.get('membership')
     gain = request.data.get('gain')
     risk = request.data.get('risk')
+    material_costs = request.data.get('material_costs')
+    owner = request.data.get('owner')
     order = Orders.objects.create(
         user_name = user_name,
         user_id = user_id,
@@ -44,7 +46,9 @@ def create(request):
         supervisor = supervisor,
         membership = membership,
         gain = gain,
-        risk = risk
+        risk = risk,
+        material_costs = material_costs,
+        owner = owner
     )
     data = model_to_dict(order)
     return Response({'status' : 200,'message' : 'order was added successfully','data' : data},status=200)
