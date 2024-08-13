@@ -9,12 +9,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+
+##############
+SECRET_KEY = os.environ.get("SECRET_KEY")   # to server 
+# SECRET_KEY='django-insecure-da=sh9o+rcy4mlw&^(73%6!&0k==q-_&hna#2&5l9da#%i_ebr'   # to me 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+
+##############
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" , ")  # to server 
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(" ")  # to me 
+
 
 # Application definition
 
@@ -73,6 +80,8 @@ WSGI_APPLICATION = "procosts.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+###################
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("SQL_ENGINE"),
@@ -82,8 +91,20 @@ DATABASES = {
         "HOST": os.environ.get("SQL_HOST"),
         "PORT": os.environ.get("SQL_PORT"),
     }
-}
+} # to server 
 
+
+# DATABASES = {
+#     'default': {
+
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'printing_costs',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'PORT': '3306',     
+#     }
+# }  # to me 
 
 AUTH_USER_MODEL = "account.User"
 
